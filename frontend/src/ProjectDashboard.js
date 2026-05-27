@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Project() {
+function ProjectDashboard() {
     const backgroundImage = "/high-tech-pic.png"
     const [projects, setProjects] = useState([])
     const navigate = useNavigate();
 
-    const handleProjectNav = (projectName) => {
-        const cleanedProjectName = projectName.trim().replace(/\s+/g, '-');
-        navigate(`/project/${cleanedProjectName}`);
+    const handleProjectNav = (projectSlug) => {
+      navigate(`/project/${projectSlug}`);
     }
 
     const handleAddProject = () => {
@@ -21,6 +20,17 @@ function Project() {
         .then(res => setProjects(res.data))
         .catch(err => console.error(err));
     }, [])
+
+    const formatDate = (dateString) => {
+      if (!dateString) {
+        return "N/A";
+      }
+      return new Date(dateString).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
   return (
 
     <div className='d-flex vh-100 justify-content-center align-items-center' style={{
@@ -35,18 +45,20 @@ function Project() {
         <table className='table'>
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Project</th>
               <th>Description</th>
               <th>Author</th>
+              <th>Date Created</th>
             </tr>
           </thead>
           <tbody>
             {
               projects.map((data)=> (
-                <tr key={data.id} onClick={() => handleProjectNav(data.name)} style={{cursor: 'pointer'}}>
-                  <td>{data.name}</td>
+                <tr key={data.project_id} onClick={() => handleProjectNav(data.slug)} style={{cursor: 'pointer'}}>
+                  <td>{data.project_name}</td>
                   <td>{data.description}</td>
                   <td>{data.author_id}</td>
+                  <td>{formatDate(data.date_created)}</td>
                 </tr>
               ))
             }
@@ -59,4 +71,4 @@ function Project() {
   )
 }
 
-export default Project
+export default ProjectDashboard

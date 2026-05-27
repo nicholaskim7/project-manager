@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom';
 
-function CreateProject() {
+function CreateTask() {
+    const { id } = useParams();
     const [formData, setFormData] = useState({
-        project_name: '',
+        task_title: '',
         description: ''
     });
 
@@ -19,7 +21,7 @@ function CreateProject() {
         console.log('form submited: ', formData);
         // logic to send data to server
         try {
-            const response = await fetch('http://localhost:8081/api/projects', {
+            const response = await fetch(`http://localhost:8081/api/projects/${id}/tasks`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -30,11 +32,11 @@ function CreateProject() {
                 throw new Error(`http error! status: ${response.status}`);
             }
 
-            const createdProject = await response.json();
-            console.log('project successfully created: ', createdProject);
-            setFormData({ project_name: '', description: '' });
+            const createdTask = await response.json();
+            console.log('task successfully created: ', createdTask);
+            setFormData({ task_title: '', description: ''});
         } catch (error) {
-            console.error('failed to create project:', error);
+            console.error('failed to create task:', error);
         }
     }
   return (
@@ -42,12 +44,12 @@ function CreateProject() {
         <div className='w-40 bg-white rounded p-3'>
             <form className="d-flex flex-column gap-3" onSubmit={handleSubmit}>
             <div>
-                <label htmlFor="project_name" className="form-label">project name:</label>
+                <label htmlFor="task_title" className="form-label">Task title:</label>
                 <input
                 type="text"
-                id="project_name"
-                name="project_name"
-                value={formData.project_name}
+                id="task_title"
+                name="task_title"
+                value={formData.task_title}
                 onChange={handleChange}
                 className="form-control"
                 />
@@ -70,4 +72,4 @@ function CreateProject() {
   )
 }
 
-export default CreateProject
+export default CreateTask
