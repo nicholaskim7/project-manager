@@ -146,6 +146,7 @@ function ProjectOverview() {
                     <tr>
                       <th>Task</th>
                       <th>Description</th>
+                      <th>Status</th>
                       <th>Date Created</th>
                     </tr>
                   </thead>
@@ -155,6 +156,7 @@ function ProjectOverview() {
                         <tr key={data.tasks_id} style={{cursor: 'pointer'}}>
                           <td>{data.task_title}</td>
                           <td>{data.description}</td>
+                          <td>{data.status}</td>
                           <td>{formatDate(data.date_created)}</td>
                         </tr>
                       ))

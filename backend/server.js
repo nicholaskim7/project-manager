@@ -103,6 +103,9 @@ app.post("/api/projects", async (req, res) => {
 app.post("/api/projects/:id/tasks", async (req, res) => {
     const id = req.params.id;
     const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+    }
     try {
         const { task_title, description} = req.body;
         if (!task_title) {
@@ -117,6 +120,7 @@ app.post("/api/projects/:id/tasks", async (req, res) => {
         const values = [task_title, description, idInt];
 
         const data = await client.query(sql, values);
+
         return res.status(201).json(data.rows[0]);
     } catch (error) {
         console.error("error creating tasks: ", error);
@@ -124,7 +128,44 @@ app.post("/api/projects/:id/tasks", async (req, res) => {
     }
 })
 
+app.patch("/api/tasks/:id", async (req, res) => {
+    const id = req.params.id;
+    const idInt = parseInt(id, 10);
+    const allowedStatus = ["To-Do", "In-Progress" ,"Done"]
 
+    if (isNaN(idInt)) {
+        return res.status(400).json({ error: "Invalid task ID" });
+    }
+    try {
+        const { status } = req.body;
+        if (!status) {
+            return res.status(400).json({ error: "missing required fields" });
+        }
+        if (!allowedStatus.includes(status)) {
+            return res.status(400).json({ error: "invalid status field" });
+        }
+        
+        const sql = `
+            UPDATE tasks
+            SET status = $1
+            WHERE task_id = $2
+            RETURNING *
+        `;
+        const values = [status, idInt];
+
+        const data = await client.query(sql, values);
+
+        // no task found by that id
+        if (data.rows.length === 0) {
+            return res.status(404).json({ error: "Task not found" });
+        }
+
+        return res.status(200).json(data.rows[0]);
+    } catch (error) {
+        console.error("error updating task status: ", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+})
 
 app.listen(8081, () => {
     console.log("listening on port :8081");
