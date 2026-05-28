@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import App from './Board/App'
 function ProjectOverview() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -110,10 +111,47 @@ function ProjectOverview() {
         navigate(`/new-task/projects/${projectId}`);
   }
 
+  // filter task data into todo, inprogress, done boxes
+  const kanbanData = [
+    {
+      id: "todo",
+      name: "To Do",
+      cards: tasks
+        .filter(task => task.status === 'To-Do')
+        .map(task => ({ 
+           id: task.task_id, 
+           title: task.task_title, 
+           description: task.description 
+        }))
+    },
+    {
+      id: "inprogress",
+      name: "In Progress",
+      cards: tasks
+        .filter(task => task.status === 'In-Progress')
+        .map(task => ({ 
+           id: task.task_id, 
+           title: task.task_title, 
+           description: task.description 
+        }))
+    },
+    {
+      id: "done",
+      name: "Done",
+      cards: tasks
+        .filter(task => task.status === 'Done')
+        .map(task => ({ 
+           id: task.task_id, 
+           title: task.task_title, 
+           description: task.description 
+        }))
+    }
+  ];
+
   return (
     <div className="container my-5"> 
       <div className="row justify-content-center">
-        <div className="col-md-10">
+        <div className="col-md-12">
           
           <div className="mb-4">
             <div className="d-flex justify-content-between align-items-center flex-wrap mb-2">
@@ -125,48 +163,28 @@ function ProjectOverview() {
 
           <hr className="my-4" />
 
-          <div className="mt-4">
-            <h4 className="fw-semibold mb-3">Project Tasks</h4>
-            <div className="text-muted p-4 bg-light border rounded text-center">
-              <button className='btn btn-success' onClick={() => handleAddTask(project.project_id)}>New Task</button>
-               {/* inline conditional rendering for task states */}
-              {taskLoading ? (
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading Task...</span>
-                    </div>
-              ) : taskError ? (
-                <p style={{ color: 'red' }}>Error: {taskError}</p>
-              ) : tasks.length === 0 ? (
-                <p>No tasks yet.</p>
-              ) : (
-
-                <div>
-                  <table className='table'>
-                  <thead>
-                    <tr>
-                      <th>Task</th>
-                      <th>Description</th>
-                      <th>Status</th>
-                      <th>Date Created</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      tasks.map((data)=> (
-                        <tr key={data.tasks_id} style={{cursor: 'pointer'}}>
-                          <td>{data.task_title}</td>
-                          <td>{data.description}</td>
-                          <td>{data.status}</td>
-                          <td>{formatDate(data.date_created)}</td>
-                        </tr>
-                      ))
-                    }
-                  </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+          <div className="mt-4 d-flex justify-content-between align-items-center mb-3">
+            <h4 className="fw-semibold m-0">Project Tasks</h4>
+            <button className='btn btn-success' onClick={() => handleAddTask(project.project_id)}>New Task</button>
           </div>
+          
+          <div className="bg-light border rounded">
+            {taskLoading ? (
+                <div className="d-flex justify-content-center p-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading Task...</span>
+                  </div>
+                </div>
+            ) : taskError ? (
+              <p className="p-4" style={{ color: 'red' }}>Error: {taskError}</p>
+            ) : tasks.length === 0 ? (
+              <p className="p-4 text-center">No tasks yet.</p>
+            ) : (
+              // drag and drop board for tasks
+              <App initialData={kanbanData} />
+            )}
+          </div>
+
         </div>
       </div>
     </div> 

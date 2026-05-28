@@ -1,3 +1,20 @@
+# References
+
+## Drag and Drop Component with React
+
+Found a well made component for drag and droping card items in a blog post by codemzy.
+
+### `https://www.codemzy.com/blog/react-drag-drop-component`
+
+### `https://gist.github.com/codemzy/99282424b323d0741e76e1cf7c62f2e4`
+
+## Drag and Drop Kanban Board with React
+
+Referred to another blog post by codemzy on usage of the drag and drop component below:
+
+### `https://www.codemzy.com/blog/trello-drag-and-drop-in-react`
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
